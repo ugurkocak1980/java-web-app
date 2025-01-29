@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+agent.jar
+
+var/lib/jenkins/remoting/jarCache/*
+var/lib/jenkins/remoting/logs/*
