@@ -11,7 +11,9 @@ pipeline {
     }
     stage('Scan') {
       steps {
-        sh 'trivy ugurkocak1980/java-web-app:latest'
+      //sh 'trivy image alpine:3.10'
+      //sh 'trivy image ugurkocak1980/java-web-app:latest'
+      sh 'docker scout cves local://ugurkocak1980/java-web-app:latest'
       }
     }
   }
