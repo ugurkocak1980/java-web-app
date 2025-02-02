@@ -1,20 +1,35 @@
 pipeline {
   agent { label 'linux' }
+    environment {
+          // Specify the Docker image name and tag
+          DOCKER_IMAGE = 'ugurkocak1980/java-web-app:latest'
+          // (Optional) Specify GitHub repository URL
+          GIT_REPO_URL = 'https://github.com/ugurkocak1980/java-web-app'
+      }
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
   stages {
     stage('Build') {
       steps {
-        sh 'docker build -t ugurkocak1980/java-web-app:latest .'
+        sh 'docker build -t ${DOCKER_IMAGE} .'
       }
     }
     stage('Scan') {
       steps {
         //sh 'trivy image alpine:3.10'
         //sh 'trivy image ugurkocak1980/java-web-app:latest'
-        sh 'docker scout cves local://ugurkocak1980/java-web-app:latest'
+        //sh 'docker scout cves local://ugurkocak1980/java-web-app:latest'
+        // Run Trivy scan on the Docker image
+        sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/root/.cache/ aquasec/trivy:latest image ${DOCKER_IMAGE}'
       }
     }
   }
+
+  post {
+          always {
+              // Clean up Docker images to free space
+              sh 'docker rmi ${DOCKER_IMAGE} || true'
+          }
+      }
 }
